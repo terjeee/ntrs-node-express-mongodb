@@ -1,0 +1,550 @@
+{
+	"info": {
+		"_postman_id": "6d6adfec-588a-4150-b409-216ca4d7721b",
+		"name": "Node, Express & MongoDb - Course",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Tour",
+			"item": [
+				{
+					"name": "/tours",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours"
+							],
+							"query": [
+								{
+									"key": "difficulty",
+									"value": "easy",
+									"disabled": true
+								},
+								{
+									"key": "price[lte]",
+									"value": "999",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "price",
+									"disabled": true
+								},
+								{
+									"key": "fields",
+									"value": "name,ratingsAverage,price,difficuly",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/tours/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/63d6274d235a6cc0d6be5a4f",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"63d6274d235a6cc0d6be5a4f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/tours",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"TESTTESTTEST\",\r\n    \"duration\": 5,\r\n    \"difficulty\": \"easy\",\r\n    \"ratingsAverage\": null,\r\n    \"ratingsQuantity\": 37,\r\n    \"price\": 397,\r\n    \"priceDiscount\": 200,\r\n    \"summary\": \"Breathtaking hike through the Canadian Banff National Park\",\r\n    \"description\": \"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\",\r\n    \"secretTour\": false\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/tours",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/tours/:id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"1111111111111\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ULR}}/api/v1/tours/63d6274d235a6cc0d6be5a4c",
+							"host": [
+								"{{ULR}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"63d6274d235a6cc0d6be5a4c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/tours/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/63e785b65bab063c804f2fdb",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"63e785b65bab063c804f2fdb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/tours/best-value",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/best-value?sort=-duration,price&limit=5",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"best-value"
+							],
+							"query": [
+								{
+									"key": "difficulty",
+									"value": "easy",
+									"disabled": true
+								},
+								{
+									"key": "price[lte]",
+									"value": "999",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "-duration,price"
+								},
+								{
+									"key": "fields",
+									"value": "name,ratingsAverage,price,difficuly",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/tours/tour-stats (protectedRoute)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/tour-stats",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"tour-stats"
+							],
+							"query": [
+								{
+									"key": "price[lte]",
+									"value": "999",
+									"disabled": true
+								},
+								{
+									"key": "fields",
+									"value": "name,ratingsAverage,price,difficuly",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/tours/monthly-plan/:year",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/monthly-plan/2021",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"monthly-plan",
+								"2021"
+							],
+							"query": [
+								{
+									"key": "price[lte]",
+									"value": "999",
+									"disabled": true
+								},
+								{
+									"key": "fields",
+									"value": "name,ratingsAverage,price,difficuly",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/TEST-BAD-URL",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"44444444444444\",\r\n    \"duration\": 5,\r\n    \"difficulty\": \"easy\",\r\n    \"ratingsAverage\": null,\r\n    \"ratingsQuantity\": 37,\r\n    \"price\": 397,\r\n    \"priceDiscount\": 200,\r\n    \"summary\": \"Breathtaking hike through the Canadian Banff National Park\",\r\n    \"description\": \"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.\",\r\n    \"secretTour\": false\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/test-bad-url",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"test-bad-url"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "/users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"user\",\r\n    \"email\":\"user@test.no\",\r\n    \"password\": \"12345678\",\r\n    \"passwordConfirm\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/signup",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/signin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"test@test.no\",\r\n    \"password\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/signin",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/forgot-password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"test@test.no\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/forgot-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/reset-password/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"87654321\",\r\n    \"passwordConfirm\": \"87654321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/reset-password/{{resetToken}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"reset-password",
+								"{{resetToken}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

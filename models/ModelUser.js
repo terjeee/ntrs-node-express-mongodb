@@ -71,11 +71,19 @@ schemaUser.pre("save", async function (next) {
   next();
 });
 
+schemaUser.pre("save", function (next) {
+  if (this.isNew) return next();
+  if (!this.isModified("password")) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 // INSTANCES/METHODS
 // INSTANCES/METHODS
 
 schemaUser.methods.isCorrectPassword = async function (submittedPassword) {
-  return await bcrypt.compare(this.password, submittedPassword);
+  return await bcrypt.compare(submittedPassword, this.password);
 };
 
 schemaUser.methods.isPasswordChangedAfter = function (jwtTimestamp) {
@@ -92,9 +100,6 @@ schemaUser.methods.createPasswordResetToken = function () {
 
   this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
   this.passwordResetExpires = Date.now() + 600000; // 10 minnutter
-
-  console.log("dataBase 1: ", resetToken);
-  console.log("dataBase 2: ", this.passwordResetToken);
 
   return resetToken;
 };

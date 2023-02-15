@@ -4,6 +4,11 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
 const schemaUser = new mongoose.Schema({
+  activeAccount: {
+    type: Boolean,
+    default: true,
+    select: true,
+  },
   name: {
     type: String,
     required: [true, "Provide a name :)"],
@@ -76,6 +81,14 @@ schemaUser.pre("save", function (next) {
   if (!this.isModified("password")) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// QUERY MIDDLEWARE //
+// QUERY MIDDLEWARE //
+
+schemaUser.pre(/^find/, function (next) {
+  this.find({ activeAccount: { $ne: false } });
   next();
 });
 

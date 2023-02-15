@@ -7,6 +7,26 @@ const AppError = require("../utils/appError");
 const { createJWT } = require("../utils/jsonWebToken");
 const sendEmail = require("../utils/email");
 
+// HELPER FUNCTIONS //
+// HELPER FUNCTIONS //
+
+function res_createSendJWT(res, user, statusCode = 200) {
+  const tokenJWT = createJWT(user._id);
+  const cookieOptions = {
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRATION * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV.trim() === "production") cookieOptions.secure = true;
+
+  res.cookie("jwt", tokenJWT, cookieOptions);
+  res.status(statusCode).send({
+    status: "success",
+    token: tokenJWT,
+    data: { user },
+  });
+}
+
 // USER CONTROLLERS //
 // USER CONTROLLERS //
 
@@ -23,15 +43,16 @@ exports.signUp = async (req, res, next) => {
 
     // create JSONWEBTOKEN on sign-up -> jwt.sign(objPAYLOAD, secretKey(from .env), objOPTIONS)
     // const jwToken = jwt.sign({ id: newUser._id }, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION });
-    const jwtoken = createJWT(String(newUser._id));
+    const tokenJWT = createJWT(String(newUser._id));
 
-    res.status(201).send({
-      status: "success",
-      token: jwtoken,
-      data: {
-        user: newUser,
-      },
-    });
+    res_createSendJWT(res, newUser, 201);
+    // res.status(201).send({
+    //   status: "success",
+    //   token: tokenJWT,
+    //   data: {
+    //     user: newUser,
+    //   },
+    // });
   } catch (error) {
     res.status(404).send({
       status: "fail",
@@ -153,6 +174,36 @@ exports.updatePassword = async function (req, res, next) {
   } catch (error) {
     new AppError(error, 500);
   }
+};
+
+exports.updateInformation = async function (req, res, next) {
+  try {
+    // update user document
+    const { name, email } = req.body;
+    const userDb = await ModelUser.findOne({ _id: req.user._id });
+
+    if (name) userDb.name = name;
+    if (email) userDb.email = email;
+
+    const updatedUser = await userDb.save({ validateModifiedOnly: true });
+
+    res.status(200).send({
+      status: "success",
+      data: updatedUser,
+    });
+  } catch (error) {
+    new AppError(error);
+  }
+};
+
+exports.inactivateAccount = async function (req, res, next) {
+  const { id } = req.user;
+
+  await ModelUser.findByIdAndUpdate(id, { activeAccount: false });
+
+  res.status(200).send({
+    status: "success",
+  });
 };
 
 // APPLICATION CONTROLLERS //

@@ -41,7 +41,7 @@ exports.signIn = async (req, res, next) => {
     res_createSendCookieJWT(res, dbUser, 200);
   } catch (error) {
     res.status(400).send({
-      status: "success",
+      status: "error",
       message: error,
     });
   }
@@ -102,7 +102,6 @@ exports.resetPassword = async function (req, res, next) {
     await dbUser.save({ validateModifiedOnly: true });
 
     //login dbUser by sending JWT
-    const tokenJWT = createJWT(dbUser._id);
 
     res_createSendCookieJWT(res, dbUser, 200);
   } catch (error) {

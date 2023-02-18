@@ -1,31 +1,10 @@
-const jsonwebtoken = require("jsonwebtoken");
 const crypto = require("crypto");
 
 const ModelUser = require("../models/ModelUser");
 const AppError = require("../utils/appError");
 
-const { createJWT } = require("../utils/jsonWebToken");
+const { res_createSendCookieJWT } = require("../utils/cookieJWT");
 const sendEmail = require("../utils/email");
-
-// HELPER FUNCTIONS //
-// HELPER FUNCTIONS //
-
-function res_createSendJWT(res, user, statusCode = 200) {
-  const tokenJWT = createJWT(user._id);
-  const cookieOptions = {
-    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRATION * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-  };
-
-  if (process.env.NODE_ENV.trim() === "production") cookieOptions.secure = true;
-
-  res.cookie("jwt", tokenJWT, cookieOptions);
-  res.status(statusCode).send({
-    status: "success",
-    token: tokenJWT,
-    data: { user },
-  });
-}
 
 // USER CONTROLLERS //
 // USER CONTROLLERS //
@@ -41,18 +20,7 @@ exports.signUp = async (req, res, next) => {
       role: req.body.role,
     });
 
-    // create JSONWEBTOKEN on sign-up -> jwt.sign(objPAYLOAD, secretKey(from .env), objOPTIONS)
-    // const jwToken = jwt.sign({ id: newUser._id }, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION });
-    const tokenJWT = createJWT(String(newUser._id));
-
-    res_createSendJWT(res, newUser, 201);
-    // res.status(201).send({
-    //   status: "success",
-    //   token: tokenJWT,
-    //   data: {
-    //     user: newUser,
-    //   },
-    // });
+    res_createSendCookieJWT(res, newUser, 201);
   } catch (error) {
     res.status(404).send({
       status: "fail",
@@ -70,12 +38,7 @@ exports.signIn = async (req, res, next) => {
     if (!dbUser || !(await dbUser.isCorrectPassword(reqPassword)))
       return next(new AppError("Incorrect email or password", 401));
 
-    const tokenJWT = createJWT(dbUser._id);
-
-    res.status(200).send({
-      status: "success",
-      token: tokenJWT,
-    });
+    res_createSendCookieJWT(res, dbUser, 200);
   } catch (error) {
     res.status(400).send({
       status: "success",
@@ -98,7 +61,7 @@ exports.forgotPassword = async function (req, res, next) {
   const message = `Forgot your password? Don't you worry child; ${resetURL}.`;
 
   try {
-    // send reset link to emai
+    // send reset link to email
     // await sendEmail({
     //   to: user.email,
     //   subject: "Reset password",
@@ -123,28 +86,25 @@ exports.resetPassword = async function (req, res, next) {
   try {
     // find user based on token
     const hashedToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
-    const user = await ModelUser.findOne({ passwordResetToken: hashedToken });
+    const dbUser = await ModelUser.findOne({ passwordResetToken: hashedToken });
 
     // guard clauses
-    if (!user) return next(new AppError("Invalid token", 400));
-    if (user.passwordResetExpires < Date.now()) return next(new AppError("Expired token.", 400));
+    if (!dbUser) return next(new AppError("Invalid token", 400));
+    if (dbUser.passwordResetExpires < Date.now()) return next(new AppError("Expired token.", 400));
     if (req.body.password.length < 8) return next(new AppError("Password doenst meet the requirements.", 400));
     if (req.body.password !== req.body.passwordConfirm) return next(new AppError("Passwords are not matching", 400));
 
     // update changedPasswordAt
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
-    await user.save({ validateModifiedOnly: true });
+    dbUser.password = req.body.password;
+    dbUser.passwordConfirm = req.body.passwordConfirm;
+    dbUser.passwordResetToken = undefined;
+    dbUser.passwordResetExpires = undefined;
+    await dbUser.save({ validateModifiedOnly: true });
 
-    //login user by sending JWT
-    const tokenJWT = createJWT(user._id);
+    //login dbUser by sending JWT
+    const tokenJWT = createJWT(dbUser._id);
 
-    res.status(200).send({
-      status: "success",
-      token: tokenJWT,
-    });
+    res_createSendCookieJWT(res, dbUser, 200);
   } catch (error) {
     new AppError(error, 500);
   }
@@ -153,21 +113,21 @@ exports.resetPassword = async function (req, res, next) {
 exports.updatePassword = async function (req, res, next) {
   try {
     // get user
-    const userDb = await ModelUser.findById(req.user._id).select("+password");
+    const dbUser = await ModelUser.findById(req.user._id).select("+password");
 
     // check if req.body.password is matching with db
-    if (!(await userDb.isCorrectPassword(req.body.password))) return next(new AppError("Password is incorrect"), 500);
+    if (!(await dbUser.isCorrectPassword(req.body.password))) return next(new AppError("Password is incorrect"), 500);
     if (req.body.newPassword !== req.body.newPasswordConfirm)
       return next(new AppError("Confirm password doesnt match", 500));
 
     //update password
-    userDb.password = req.body.newPassword;
-    userDb.passwordConfirm = req.body.newPasswordConfirm;
-    await userDb.save({ validateModifiedOnly: true });
+    dbUser.password = req.body.newPassword;
+    dbUser.passwordConfirm = req.body.newPasswordConfirm;
+    await dbUser.save({ validateModifiedOnly: true });
 
     res.status(200).send({
       status: "success",
-      token: createJWT(userDb._id),
+      token: createJWT(dbUser._id),
     });
 
     res.status();
@@ -180,12 +140,12 @@ exports.updateInformation = async function (req, res, next) {
   try {
     // update user document
     const { name, email } = req.body;
-    const userDb = await ModelUser.findOne({ _id: req.user._id });
+    const dbUser = await ModelUser.findOne({ _id: req.user._id });
 
-    if (name) userDb.name = name;
-    if (email) userDb.email = email;
+    if (name) dbUser.name = name;
+    if (email) dbUser.email = email;
 
-    const updatedUser = await userDb.save({ validateModifiedOnly: true });
+    const updatedUser = await dbUser.save({ validateModifiedOnly: true });
 
     res.status(200).send({
       status: "success",

@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const ModelUser = require("./ModelUser");
+
 // SCHEMA = BLUEPRINT of DATABASE-DOCUMENTS
 // SCHEMA = BLUEPRINT of DATABASE-DOCUMENTS
 
@@ -11,7 +13,7 @@ const schemaTour = new mongoose.Schema(
       required: [true, "Name is missing!"],
       unique: [true, "Tour already exists."],
       maxLength: [40, "Name too long. MAX: 40 characters."],
-      minLength: [10, "Name is too short. MIN: 10 characters"],
+      minLength: [4, "Name is too short. MIN: 10 characters"],
     },
     description: {
       type: String,
@@ -46,11 +48,41 @@ const schemaTour = new mongoose.Schema(
       type: Number,
       required: [true, "Missing duration."],
     },
+    startLocation: {
+      // ! GeoJSON = type: {}, coordinates: []
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number], // ! [longitude, latitude]
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: "Point",
+          enum: "Point",
+        },
+        coordinates: [Number], // ! [longitude, latitude]
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    images: [String],
     imageCover: {
       type: String,
       require: [false, "Missing cover image."],
     },
-    images: [String],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
     maxGroupSize: {
       type: Number,
       required: [false, "Missing group size."],
@@ -111,17 +143,31 @@ schemaTour.post("save", function (document, next) {
   next();
 });
 
+// // ! EMBEDDING Guides[]
+// schemaTour.pre("save", async function (next) {
+//   const promiseGuides = this.guides.map(async (id) => await ModelUser.findOne({ _id: id }));
+//   this.guides = await Promise.all(promiseGuides);
+//   next();
+// });
+
 // QUERY MIDDLEWARE = FIND()
 // QUERY MIDDLEWARE = FIND()
 
 schemaTour.pre(/^find/, function (next) {
-  this.find({ secretTour: { $ne: true } });
-  this.start = Date.now();
+  this.startTimerQuery = Date.now();
+  next();
+});
+
+schemaTour.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } })
+    .select("-__v")
+    .populate({ path: "guides", select: "-__v" });
+
   next();
 });
 
 schemaTour.post(/^find/, function (documents, next) {
-  console.log(`✅ QUERY TOOK: ${Date.now() - this.start}ms`);
+  console.log(`✅ QUERY TOOK: ${Date.now() - this.startTimerQuery}ms`);
   next();
 });
 

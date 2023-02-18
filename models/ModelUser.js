@@ -7,7 +7,7 @@ const schemaUser = new mongoose.Schema({
   activeAccount: {
     type: Boolean,
     default: true,
-    select: true,
+    select: false,
   },
   name: {
     type: String,
@@ -53,12 +53,15 @@ const schemaUser = new mongoose.Schema({
   },
   passwordChangedAt: {
     type: Date,
+    select: false,
   },
   passwordResetToken: {
     type: String,
+    select: false,
   },
   passwordResetExpires: {
     type: Date,
+    select: false,
   },
 });
 

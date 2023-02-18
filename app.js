@@ -1,7 +1,8 @@
 const express = require("express");
+const expressRateLimit = require("express-rate-limit"); // https://www.npmjs.com/package/express-rate-limit
 const helmet = require("helmet"); // https://www.npmjs.com/package/helmet
 const mongoSanitize = require("express-mongo-sanitize"); // https://www.npmjs.com/package/express-mongo-sanitize
-const expressRateLimit = require("express-rate-limit"); // https://www.npmjs.com/package/express-rate-limit
+const hpp = require("hpp"); // https://www.npmjs.com/package/hpp
 const morgan = require("morgan"); // https://www.npmjs.com/package/morgan
 
 const tourRouter = require("./routes/tourRouter");
@@ -37,6 +38,7 @@ const rateLimit = expressRateLimit({
 app.use("/api/", rateLimit); // ! limits requests from same IP
 app.use(helmet()); // ! security: set HTTP-headers
 app.use(mongoSanitize()); // ! sanitize request(inputs) mot NoSQL attacks
+app.use(hpp({ whitelist: ["duration", "price"] })); // ! HTTP parameter pollution (duplicate): LAST MIDDLEWARE IN STACK
 
 // ROUTES
 // ROUTES

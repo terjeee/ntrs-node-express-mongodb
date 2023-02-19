@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const ModelUser = require("./ModelUser");
 
-// SCHEMA = BLUEPRINT of DATABASE-DOCUMENTS
-// SCHEMA = BLUEPRINT of DATABASE-DOCUMENTS
+// SCHEMA = BLUEPRINT of DATABASE-DOCUMENTS //
+// SCHEMA = BLUEPRINT of DATABASE-DOCUMENTS //
 
 const schemaTour = new mongoose.Schema(
   {
@@ -75,7 +75,7 @@ const schemaTour = new mongoose.Schema(
     images: [String],
     imageCover: {
       type: String,
-      require: [false, "Missing cover image."],
+      required: [false, "Missing cover image."],
     },
     guides: [
       {
@@ -119,8 +119,8 @@ const schemaTour = new mongoose.Schema(
   }
 );
 
-// VIRTUAL FIELDS = Not saved on DB, but sent as a field to user
-// VIRTUAL FIELDS = Not saved on DB, but sent as a field to user
+// VIRTUAL FIELDS = Not saved on DB, but sent as a field to user //
+// VIRTUAL FIELDS = Not saved on DB, but sent as a field to user //
 
 schemaTour.virtual("durationWeeks").get(function () {
   return this.duration / 7;
@@ -130,8 +130,8 @@ schemaTour.virtual("priceNOK").get(function () {
   return this.price * 10;
 });
 
-// DOCUMENT MIDDLEWARE: runs before .save() and .create()
-// DOCUMENT MIDDLEWARE: runs before .save() and .create()
+// DOCUMENT MIDDLEWARE: runs before .save() and .create() //
+// DOCUMENT MIDDLEWARE: runs before .save() and .create() 7/
 
 schemaTour.pre("save", function (next) {
   console.log("✅ PRE DOCUMENT MIDDLEWARE");
@@ -171,8 +171,8 @@ schemaTour.post(/^find/, function (documents, next) {
   next();
 });
 
-// AGGREGATION MIDDLEWARE = runs before/after aggregation
-// AGGREGATION MIDDLEWARE = runs before/after aggregation
+// AGGREGATION MIDDLEWARE = runs before/after aggregation //
+// AGGREGATION MIDDLEWARE = runs before/after aggregation //
 
 schemaTour.pre("aggregate", function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
@@ -182,7 +182,7 @@ schemaTour.pre("aggregate", function (next) {
 });
 {
 }
-// EXPORT
-// EXPORT
+// EXPORT //
+// EXPORT //
 
 module.exports = mongoose.model("Tour", schemaTour);

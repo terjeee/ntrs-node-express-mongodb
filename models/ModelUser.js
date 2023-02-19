@@ -65,7 +65,11 @@ const schemaUser = new mongoose.Schema(
       select: false,
     },
   },
-  { versionKey: false }
+  {
+    versionKey: false,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 // ENCRYPT PASSWORD (PRE-DOCUMENT MIDDLEWARE)

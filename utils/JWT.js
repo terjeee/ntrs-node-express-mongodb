@@ -1,5 +1,10 @@
 const jsonwebtoken = require("jsonwebtoken");
 
+function verifyJWT(tokenJWT) {
+  console.log(jsonwebtoken.verify(tokenJWT, process.env.JWT_KEY));
+  return jsonwebtoken.verify(tokenJWT, process.env.JWT_KEY);
+}
+
 function res_createSendCookieJWT(res, user, statusCode = 200) {
   const tokenJWT = jsonwebtoken.sign({ id: user._id }, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION });
 
@@ -13,9 +18,8 @@ function res_createSendCookieJWT(res, user, statusCode = 200) {
   res.cookie("jwt", tokenJWT, cookieOptions);
   res.status(statusCode).send({
     status: "success",
-    token: tokenJWT,
     data: { user },
   });
 }
 
-module.exports = { res_createSendCookieJWT };
+module.exports = { verifyJWT, res_createSendCookieJWT };

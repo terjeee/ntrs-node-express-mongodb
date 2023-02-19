@@ -7,6 +7,7 @@ const morgan = require("morgan"); // https://www.npmjs.com/package/morgan
 
 const tourRouter = require("./routes/tourRouter");
 const userRouter = require("./routes/userRouter");
+const reviewRouter = require("./routes/reviewRouter");
 
 const AppError = require("./utils/appError");
 const errorHandler = require("./controllers/errorHandler");
@@ -45,6 +46,7 @@ app.use(hpp({ whitelist: ["duration", "price"] })); // ! HTTP parameter pollutio
 
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 app.all("*", (req, res, next) => {
   // const error = new Error(`$✅ ERROR MIDDLEWARE - {req.originalUrl} doesn't exist!`);

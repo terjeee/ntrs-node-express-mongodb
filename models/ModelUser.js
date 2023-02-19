@@ -3,67 +3,70 @@ const emailValidator = require("email-validator");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-const schemaUser = new mongoose.Schema({
-  activeAccount: {
-    type: Boolean,
-    default: true,
-    select: false,
-  },
-  name: {
-    type: String,
-    required: [true, "Provide a name :)"],
-  },
-  email: {
-    type: String,
-    required: [true, "Provide an email."],
-    unique: true,
-    lowercase: true,
-    validate: {
-      validator: emailValidator.validate,
-      message: "Email is not valid!",
+const schemaUser = new mongoose.Schema(
+  {
+    activeAccount: {
+      type: Boolean,
+      default: true,
+      select: false,
     },
-  },
-  role: {
-    type: String,
-    require: true,
-    enum: ["user", "guide", "lead-guide", "admin"],
-    default: "user",
-  },
-  password: {
-    type: String,
-    required: [true, "Provide a valid password."],
-    minLength: 8,
-    select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, "Confirm password."],
-    select: false,
-    validate: {
-      // THIS ONLY RUNS ON .create() and .save()
-      message: "Passwords are not matching.",
-      validator: function (string) {
-        return string === this.password;
+    name: {
+      type: String,
+      required: [true, "Provide a name :)"],
+    },
+    email: {
+      type: String,
+      required: [true, "Provide an email."],
+      unique: true,
+      lowercase: true,
+      validate: {
+        validator: emailValidator.validate,
+        message: "Email is not valid!",
       },
     },
+    role: {
+      type: String,
+      require: true,
+      enum: ["user", "guide", "lead-guide", "admin"],
+      default: "user",
+    },
+    password: {
+      type: String,
+      required: [true, "Provide a valid password."],
+      minLength: 4,
+      select: false,
+    },
+    passwordConfirm: {
+      type: String,
+      required: [true, "Confirm password."],
+      select: false,
+      validate: {
+        // THIS ONLY RUNS ON .create() and .save()
+        message: "Passwords are not matching.",
+        validator: function (string) {
+          return string === this.password;
+        },
+      },
+    },
+    photo: {
+      type: String,
+      required: false,
+    },
+    passwordChangedAt: {
+      type: Date,
+      select: false,
+    },
+    passwordResetToken: {
+      type: String,
+      select: false,
+    },
+    passwordResetExpires: {
+      type: Date,
+      select: false,
+    },
   },
-  photo: {
-    type: String,
-    required: false,
-  },
-  passwordChangedAt: {
-    type: Date,
-    select: false,
-  },
-  passwordResetToken: {
-    type: String,
-    select: false,
-  },
-  passwordResetExpires: {
-    type: Date,
-    select: false,
-  },
-});
+  { versionKey: false }
+);
 
 // ENCRYPT PASSWORD (PRE-DOCUMENT MIDDLEWARE)
 // ENCRYPT PASSWORD (PRE-DOCUMENT MIDDLEWARE)

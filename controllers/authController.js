@@ -3,7 +3,7 @@ const crypto = require("crypto");
 const ModelUser = require("../models/ModelUser");
 const AppError = require("../utils/appError");
 
-const { res_createSendCookieJWT } = require("../utils/cookieJWT");
+const { verifyJWT, res_createSendCookieJWT } = require("../utils/JWT");
 const sendEmail = require("../utils/email");
 
 // USER CONTROLLERS //
@@ -170,25 +170,23 @@ exports.inactivateAccount = async function (req, res, next) {
 
 exports.protectWithLogIn = async function (req, res, next) {
   try {
-    if (!req.headers.authorization || !req.headers.authorization.startsWith("Bearer"))
+    if (!req.headers.authorization || !req.headers.authorization.startsWith("Bearer")) {
       return next(new AppError("Please log in", 401));
+    }
 
-    // GET JWT
+    // GET JWT, then VERIFY with SECRET_KEY
     const tokenJWT = req.headers?.authorization.split(" ")[1];
-
-    // VERIFY JWT with SECRET_KEY
-    const verifyJWT = jsonwebtoken.verify(tokenJWT, process.env.JWT_KEY);
+    const verifiedJWT = verifyJWT(tokenJWT);
 
     // CHECK IF USER EXISTS with userID on the JWT variable (verifyJWT)
-    const user = await ModelUser.findById(verifyJWT.id);
-
+    const user = await ModelUser.findById(verifiedJWT.id);
     if (!user) return next(new AppError("User doesn't exist.", 401));
 
     // CHECK IF USER CHANGED PASSWRD AFTER TOKEN WAS ISSUED
-    if (user.isPasswordChangedAfter(verifyJWT.iat))
+    if (user.isPasswordChangedAfter(verifiedJWT.iat))
       return next(new AppError("User recently changed password. Please log in again", 401));
 
-    // Send user to the next middleware
+    // Send user to the next middleware ()
     req.user = user;
 
     // grant access to next middleware on route

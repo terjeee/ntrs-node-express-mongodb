@@ -1,14 +1,16 @@
 const express = require("express");
 
-const tourController = require("../controllers/tourController");
 const authController = require("../controllers/authController");
+const tourController = require("../controllers/tourController");
+
+const reviewRouter = require("../routes/reviewRouter");
 
 const router = express.Router();
 
 // ROUTER MIDDLEWARE
 // ROUTER MIDDLEWARE
 
-// router.param("id", tourController.checkId);
+router.use("/:id/reviews", reviewRouter); // ! redirects: api/v1/tours/:id/review -> reviewrouter
 
 // ROUTES //
 // ROUTES //

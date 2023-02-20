@@ -1,8 +1,9 @@
 const ModelReview = require("../models/ModelReview");
+const { deleteDocument, patchDocument, getDocument } = require("../handlers/factoryHandler");
 
 async function getReviews(req, res, next) {
   try {
-    const filter = req.params.id ? { tour: req.params.id } : {};
+    const filter = req.params.idTour ? { tour: req.params.idTour } : {};
 
     const reviews = await ModelReview.find(filter);
 
@@ -36,8 +37,8 @@ async function postReview(req, res, next) {
   }
 }
 
-function patchReview(req, res, next) {}
+const getReview = getDocument(ModelReview);
+const patchReview = patchDocument(ModelReview);
+const deleteReview = deleteDocument(ModelReview);
 
-function deleteReview(req, res, next) {}
-
-module.exports = { getReviews, postReview };
+module.exports = { getReviews, getReview, postReview, patchReview, deleteReview };

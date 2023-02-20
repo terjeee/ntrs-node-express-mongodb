@@ -1,6 +1,7 @@
 const ModelUser = require("../models/ModelUser");
+const { deleteDocument, patchDocument, getDocument } = require("../handlers/factoryHandler");
 
-async function getAllUsers(request, response, next) {
+exports.getAllUsers = async (request, response, next) => {
   try {
     const users = await ModelUser.find();
 
@@ -14,37 +15,13 @@ async function getAllUsers(request, response, next) {
       message: "Something wrong",
     });
   }
-}
+};
 
-function getUserById(request, response) {
-  response.status(500).json({
-    status: "error",
-    message: "route not built",
-  });
-}
+exports.getMe = function (req, res, next) {
+  req.params.id = req.user._id;
+  next();
+};
 
-function createUser(request, response) {
-  response.status(500).json({
-    status: "error",
-    message: "route not built",
-  });
-}
-
-function updateUser(request, response) {
-  response.status(500).json({
-    status: "error",
-    message: "route not built",
-  });
-}
-
-function deleteUser(request, response) {
-  response.status(500).json({
-    status: "error",
-    message: "route not built",
-  });
-}
-
-// -- //
-// -- //
-
-module.exports = { getAllUsers, getUserById, createUser, updateUser, deleteUser };
+exports.getUser = getDocument(ModelUser);
+exports.patchUser = patchDocument(ModelUser);
+exports.deleteUser = deleteDocument(ModelUser);

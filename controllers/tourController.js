@@ -1,13 +1,14 @@
 const ModelTour = require("../models/ModelTour");
+const { deleteDocument, patchDocument, createDocument, getDocument } = require("../handlers/factoryHandler");
 const AppError = require("../utils/appError");
 
 // MIDDLEWARE CONTROLLERS //
 // MIDDLEWARE CONTROLLERS //
 
-exports.aliasTopTours = (request, _) => {
-  request.query.sort = "price";
-  request.query.limit = 5;
-  request.query.fields = "name,price,ratingAverage,duration";
+exports.aliasTopTours = (req, _) => {
+  req.query.sort = "price";
+  req.query.limit = 5;
+  req.query.fields = "name,price,ratingAverage,duration";
 
   next();
 };
@@ -19,6 +20,7 @@ exports.getTours = async (request, response) => {
   try {
     // 1. FILTER DATA
     let filter = request.query;
+    console.log(filter);
     filter = JSON.stringify(filter);
     filter = filter.replace(/\b(gte?|lte?)\b/g, (string) => `$${string}`);
     filter = JSON.parse(filter);
@@ -71,86 +73,13 @@ exports.getTours = async (request, response) => {
   }
 };
 
-exports.getTourById = async (request, response, next) => {
-  try {
-    const tour = await ModelTour.find({ _id: request.params.id }).populate("reviews");
+exports.getTourById = getDocument(ModelTour, { path: "reviews" });
+exports.postTour = createDocument(ModelTour);
+exports.patchTour = patchDocument(ModelTour);
+exports.deleteTour = deleteDocument(ModelTour);
 
-    if (tour.length === 0) {
-      return next(new AppError("No tour found with that ID", 404));
-    }
-
-    response.status(200).send({
-      status: "success",
-      data: { tour: tour },
-    });
-  } catch (error) {
-    response.status(404).send({
-      status: "fail",
-      error: error,
-    });
-  }
-};
-
-exports.postTour = async (request, response) => {
-  try {
-    const newTour = await ModelTour.create(request.body);
-
-    response.status(200).send({
-      status: "success",
-      data: { tour: newTour },
-    });
-  } catch (error) {
-    response.status(404).send({
-      status: "fail",
-      error: error,
-    });
-  }
-};
-
-exports.patchTour = async (request, response, next) => {
-  try {
-    const tour = await ModelTour.findByIdAndUpdate(request.params.id, request.body, { new: true, runValidators: true });
-
-    if (tour.length === 0) return next(new AppError("No tour found with that ID", 404));
-
-    console.log(request.params.id);
-    console.log(tour);
-
-    response.status(200).send({
-      status: "success",
-      data: { tour },
-    });
-  } catch (error) {
-    response.status(404).send({
-      status: "fail",
-      message: error,
-    });
-  }
-};
-
-exports.deleteTour = async (request, response, next) => {
-  try {
-    const tour = await ModelTour.findByIdAndDelete(request.params.id);
-    console.log(tour);
-
-    if (!tour) {
-      return next(new AppError("No tour found with that ID", 404));
-    }
-
-    response.status(200).send({
-      status: "success",
-      data: { deletedTour: tour },
-    });
-  } catch (error) {
-    response.status(404).send({
-      status: "fail",
-      message: error,
-    });
-  }
-};
-
-// AGGREGATION
-// AGGREGATION
+// AGGREGATION //
+// AGGREGATION //
 
 exports.getTourStats = async (request, response) => {
   try {

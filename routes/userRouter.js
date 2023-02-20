@@ -16,11 +16,15 @@ router.route("/signin").post(authController.signIn);
 router.route("/forgot-password").post(authController.forgotPassword);
 router.route("/reset-password/:token").patch(authController.resetPassword);
 
-router.route("/update-password").patch(authController.protectWithLogIn, authController.updatePassword);
-router.route("/update-information").patch(authController.protectWithLogIn, authController.updateInformation);
-router.route("/inactivate-account").delete(authController.protectWithLogIn, authController.inactivateAccount);
+router.use(authController.protectWithLogIn);
 
-router.route("/").get(userController.getAllUsers).post(userController.createUser);
-router.route("/:id").get(userController.getUserById).patch(userController.updateUser).delete(userController.deleteUser);
+router.route("/get-me").get(userController.getMe, userController.getUser);
+router.route("/update-me").patch(userController.getMe, userController.patchUser);
+router.route("/update-password").patch(userController.getMe, authController.updatePassword);
+
+router.use(authController.restrictTo("admin"));
+
+router.route("/").get(userController.getAllUsers);
+router.route("/:id").get(userController.getUser).patch(userController.patchUser).delete(userController.deleteUser);
 
 module.exports = router;

@@ -1,10 +1,8 @@
 const crypto = require("crypto");
 
 const ModelUser = require("../models/ModelUser");
-const AppError = require("../utils/appError");
-
 const { verifyJWT, res_createSendCookieJWT } = require("../utils/JWT");
-const sendEmail = require("../utils/email");
+const AppError = require("../utils/appError");
 
 // USER CONTROLLERS //
 // USER CONTROLLERS //
@@ -61,13 +59,6 @@ exports.forgotPassword = async function (req, res, next) {
   const message = `Forgot your password? Don't you worry child; ${resetURL}.`;
 
   try {
-    // send reset link to email
-    // await sendEmail({
-    //   to: user.email,
-    //   subject: "Reset password",
-    //   text: message,
-    // });
-
     res.status(200).send({
       status: "success",
       token: resetToken,
@@ -124,45 +115,10 @@ exports.updatePassword = async function (req, res, next) {
     dbUser.passwordConfirm = req.body.newPasswordConfirm;
     await dbUser.save({ validateModifiedOnly: true });
 
-    res.status(200).send({
-      status: "success",
-      token: createJWT(dbUser._id),
-    });
-
-    res.status();
+    res_createSendCookieJWT(res, dbUser, 200);
   } catch (error) {
     new AppError(error, 500);
   }
-};
-
-exports.updateInformation = async function (req, res, next) {
-  try {
-    // update user document
-    const { name, email } = req.body;
-    const dbUser = await ModelUser.findOne({ _id: req.user._id });
-
-    if (name) dbUser.name = name;
-    if (email) dbUser.email = email;
-
-    const updatedUser = await dbUser.save({ validateModifiedOnly: true });
-
-    res.status(200).send({
-      status: "success",
-      data: updatedUser,
-    });
-  } catch (error) {
-    new AppError(error);
-  }
-};
-
-exports.inactivateAccount = async function (req, res, next) {
-  const { id } = req.user;
-
-  await ModelUser.findByIdAndUpdate(id, { activeAccount: false });
-
-  res.status(200).send({
-    status: "success",
-  });
 };
 
 // APPLICATION CONTROLLERS //
@@ -188,6 +144,7 @@ exports.protectWithLogIn = async function (req, res, next) {
 
     // Send user to the next middleware ()
     req.user = user;
+    console.log(req.user);
 
     // grant access to next middleware on route
     next();
@@ -200,7 +157,8 @@ exports.restrictTo = function (...roles) {
   return function (req, res, next) {
     const user = req.user;
 
-    if (!roles.includes(user.role)) return next(new AppError("You do not have permission to perform this action", 403));
+    if (roles.length > 0 && !roles.includes(user.role))
+      return next(new AppError("You do not have permission to perform this action", 403));
 
     next();
   };

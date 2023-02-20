@@ -10,7 +10,7 @@ const userRouter = require("./routes/userRouter");
 const reviewRouter = require("./routes/reviewRouter");
 
 const AppError = require("./utils/appError");
-const errorHandler = require("./controllers/errorHandler");
+const errorHandler = require("./handlers/errorHandler");
 
 const app = express();
 
@@ -53,8 +53,8 @@ app.all("*", (req, res, next) => {
   next(new AppError(`✅ MIDDLEWARE ERROR - ${req.originalUrl} doesn't exist!`, 404));
 });
 
-//  ERROR HANDLING
-//  ERROR HANDLING
+//  GLOBAL ERROR HANDLING
+//  GLOBAL ERROR HANDLING
 
 app.use(errorHandler);
 

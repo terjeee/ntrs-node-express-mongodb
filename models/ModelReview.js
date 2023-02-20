@@ -23,8 +23,9 @@ const schemaReview = new mongoose.Schema(
     },
     rating: {
       type: Number,
-      required: [true, "Keep the rating between 0.1 and 5."],
-      min: 0.1,
+      default: 0,
+      required: [true, "Keep the rating between 0 and 5."],
+      min: 0,
       max: 5,
     },
     createdAt: {

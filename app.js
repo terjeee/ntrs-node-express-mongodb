@@ -47,7 +47,6 @@ app.use(hpp({ whitelist: ["duration", "price"] })); // ! HTTP parameter pollutio
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
-
 app.all("*", (req, res, next) => {
   // const error = new Error(`$✅ ERROR MIDDLEWARE - {req.originalUrl} doesn't exist!`);
   // const error = new AppError(`✅ MIDDLEWARE ERROR - ${req.originalUrl} doesn't exist!`, 404);

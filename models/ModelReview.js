@@ -33,6 +33,7 @@ const schemaReview = new mongoose.Schema(
     },
   },
   {
+    id: false,
     versionKey: false,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -43,7 +44,17 @@ const schemaReview = new mongoose.Schema(
 // MIDDLEWARE: QUERY //
 
 schemaReview.pre(/^find/, function (next) {
-  this.find().select("-__v").populate(["tour", "user"]);
+  this.find().populate([
+    // {
+    //   path: "tour",
+    //   select: ["name"],
+    // },
+    {
+      path: "user",
+      select: ["name"],
+    },
+  ]);
+
   next();
 });
 

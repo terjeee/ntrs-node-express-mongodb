@@ -114,6 +114,7 @@ const schemaTour = new mongoose.Schema(
     },
   },
   {
+    id: false,
     versionKey: false,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -129,6 +130,13 @@ schemaTour.virtual("durationWeeks").get(function () {
 
 schemaTour.virtual("priceNOK").get(function () {
   return this.price * 10;
+});
+
+schemaTour.virtual("reviews", {
+  // ! VIRTUAL POPULATE
+  ref: "Review",
+  foreignField: "tour",
+  localField: "_id",
 });
 
 // DOCUMENT MIDDLEWARE: runs before .save() and .create() //

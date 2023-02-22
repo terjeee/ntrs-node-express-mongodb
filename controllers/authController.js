@@ -144,7 +144,6 @@ exports.protectWithLogIn = async function (req, res, next) {
 
     // Send user to the next middleware ()
     req.user = user;
-    console.log(req.user);
 
     // grant access to next middleware on route
     next();

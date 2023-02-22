@@ -59,7 +59,6 @@ const patchDocument = (Model) => async (request, response, next) => {
 
 const deleteDocument = (Model) => async (request, response, next) => {
   try {
-    console.log(request.params);
     const document = await Model.findByIdAndDelete(request.params.id);
 
     if (!document) return next(new AppError("No document with that ID", 404));

@@ -121,6 +121,13 @@ const schemaTour = new mongoose.Schema(
   }
 );
 
+// CREATE INDEX // index({kategori, acending/decending{}) // ! .examine() på await Model.find()
+// CREATE INDEX // index({kategori, acending/decending{}) // ! .examine() på await Model.find()
+
+// schemaTour.index({ price: 1 });
+schemaTour.index({ price: 1, ratingsAverage: -1 });
+schemaTour.index({ slug: 1 });
+
 // VIRTUAL FIELDS = Not saved on DB, but sent as a field to user //
 // VIRTUAL FIELDS = Not saved on DB, but sent as a field to user //
 
@@ -132,8 +139,8 @@ schemaTour.virtual("priceNOK").get(function () {
   return this.price * 10;
 });
 
+// ! VIRTUAL POPULATE
 schemaTour.virtual("reviews", {
-  // ! VIRTUAL POPULATE
   ref: "Review",
   foreignField: "tour",
   localField: "_id",

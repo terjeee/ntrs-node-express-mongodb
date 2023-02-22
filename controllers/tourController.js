@@ -20,7 +20,6 @@ exports.getTours = async (request, response) => {
   try {
     // 1. FILTER DATA
     let filter = request.query;
-    console.log(filter);
     filter = JSON.stringify(filter);
     filter = filter.replace(/\b(gte?|lte?)\b/g, (string) => `$${string}`);
     filter = JSON.parse(filter);
@@ -57,6 +56,7 @@ exports.getTours = async (request, response) => {
     }
 
     // 4. EXECUTE QUERY
+    // const tours = await query.explain(); // ! indexing, sjekke documents examined
     const tours = await query;
 
     // 5. SEND RESPONSE
@@ -143,7 +143,7 @@ exports.getMonthlyPlan = async (request, response) => {
     response.status(200).send({
       status: "success",
       results: stats.length,
-      data: { stats: stats },
+      data: stats,
     });
   } catch (error) {
     response.status(404).send({

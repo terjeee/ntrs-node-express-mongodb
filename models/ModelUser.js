@@ -38,7 +38,7 @@ const schemaUser = new mongoose.Schema(
     },
     passwordConfirm: {
       type: String,
-      required: [true, "Confirm password."],
+      required: [false, "Confirm password."],
       select: false,
       validate: {
         // THIS ONLY RUNS ON .create() and .save()

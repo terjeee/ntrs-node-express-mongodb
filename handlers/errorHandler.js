@@ -1,4 +1,6 @@
 const sendErrorDev = (error, res) => {
+  console.log("hei");
+
   res.status(error.statusCode).send({
     status: error.status,
     error: error,
@@ -8,6 +10,8 @@ const sendErrorDev = (error, res) => {
 };
 
 const sendErrorProd = (error, res) => {
+  console.log("hei");
+
   if (error.isOperational) {
     // trusted error: send details to client
     res.status(error.statusCode).send({
@@ -27,6 +31,8 @@ const sendErrorProd = (error, res) => {
 module.exports = (error, req, res, next) => {
   error.statusCode = error.statusCode || 500;
   error.status = error.status || error;
+
+  console.log("hei");
 
   if (process.env.NODE_ENV.trim() === "development") sendErrorDev(error, res);
   if (process.env.NODE_ENV.trim() === "production") sendErrorProd(error, res);

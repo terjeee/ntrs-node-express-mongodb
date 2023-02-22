@@ -17,8 +17,8 @@ const app = express();
 // ENABLE DEVELOPEMENT-MODE (Moragan) from .env file
 // ENABLE DEVELOPEMENT-MODE (Moragan) from .env file
 
-console.log("✅ ENVIRONMENT = ", process.env.NODE_ENV);
-if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
+console.log("✅ ENVIRONMENT =", process.env.NODE_ENV);
+if (process.env.NODE_ENV.trim() === "development") app.use(morgan("dev"));
 
 // GLOBALMIDDLEWARE
 // GLOBALMIDDLEWARE

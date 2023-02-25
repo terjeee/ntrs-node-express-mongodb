@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const expressRateLimit = require("express-rate-limit"); // https://www.npmjs.com/package/express-rate-limit
 const helmet = require("helmet"); // https://www.npmjs.com/package/helmet
 const mongoSanitize = require("express-mongo-sanitize"); // https://www.npmjs.com/package/express-mongo-sanitize
@@ -26,7 +27,7 @@ if (process.env.NODE_ENV.trim() === "development") app.use(morgan("dev"));
 // ! parse input-date til req.body. Uten, console.log(req.body) = undefined
 // ! limits req.body size > setLimit
 app.use(express.json({ limit: "10kb" }));
-app.use(express.static(`${__dirname}/public`)); // !serving static files
+app.use(express.static(path.join(__dirname, "public"))); // !serving static files
 
 const rateLimit = expressRateLimit({
   max: 10, // Limit each IP to X requests per `window` (here, per 15 minutes)

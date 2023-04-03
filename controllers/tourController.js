@@ -1,6 +1,6 @@
 const ModelTour = require("../models/ModelTour");
 const { deleteDocument, patchDocument, createDocument, getDocument } = require("../handlers/factoryHandler");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 
 // MIDDLEWARE CONTROLLERS //
 // MIDDLEWARE CONTROLLERS //

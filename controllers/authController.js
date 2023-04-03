@@ -2,7 +2,7 @@ const crypto = require("crypto");
 
 const ModelUser = require("../models/ModelUser");
 const { verifyJWT, res_createSendCookieJWT } = require("../utils/JWT");
-const AppError = require("../utils/appError");
+const AppError = require("../utils/AppError");
 
 // USER CONTROLLERS //
 // USER CONTROLLERS //

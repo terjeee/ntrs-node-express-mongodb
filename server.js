@@ -33,14 +33,12 @@ const server = app.listen(PORT, () => {
   console.log(`✅ APP RUNNING @ https://localhost:${PORT}`);
 });
 
-// ERROR: unhandledRejection //
-// ERROR: unhandledRejection //
+// ERROR: uncaughtException //
+// ERROR: uncaughtException //
 
-process.on("unhandledRejection", (error) => {
-  console.log("❌ UNHANDLED REJECTION");
+process.on("uncaughtException", (error) => {
+  console.log("❌ UNCAUGHT EXCEPTION");
   console.log(error.name, error.message);
 
-  server.close(() => {
-    process.exit(1);
-  });
+  process.exit(1);
 });
